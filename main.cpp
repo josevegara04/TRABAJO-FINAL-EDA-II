@@ -11,6 +11,7 @@ int main()
 {
     int n; 
     int symbol;
+    int opcion;
 
     ifstream file("Entrada.txt", ios::in);
     string line;
@@ -52,19 +53,54 @@ int main()
         }
         file.close();
 
-        if(resolver_sudoku(sudoku, n, numeros))
+        //Pedir la opción a realizar
+        cout << endl << "Escoja una opción: " << endl;
+        cout << "1. Resolver sudoku" << endl << "2. Validar sudoku" << endl << "3. Generar sudoku" << endl << "4. Imprimir sudoku" << endl <<  "0. Salir del programa" << endl;
+        cin >> opcion;
+
+        //De acuerdo a la opción seleccionada, se escoje un algoritmo
+
+        while(opcion != 0)
         {
-            imprimir_sudoku(sudoku, n);
+            switch(opcion)
+            {
+                case 1:
+                    if(resolver_sudoku(sudoku, n, numeros))
+                    {
+                        cout << endl << "-----" << "¡Sudoku resuelto!" << "-----" << endl << endl;
+                        imprimir_sudoku(sudoku, n);
+                    }
+                    else
+                    {
+                        cout << "No se pudo resolver el sudoku" << endl;
+                        imprimir_sudoku(sudoku, n);
+                    }
+                    break;
+                case 2:
+                    if(validar_sudoku(sudoku, n, numeros))
+                    {
+                        cout << endl << "-----" << "¡Sudoku valido!" << "-----" << endl << endl;
+                        imprimir_sudoku(sudoku, n);
+                    }
+                    else
+                    {
+                        cout << "El sudoku no es valido" << endl;
+                        imprimir_sudoku(sudoku, n);
+                    }
+                    break;
+                case 4:
+                    imprimir_sudoku(sudoku, n);
+                    break;
+            }
+            cout << endl << "Escoja una opción: " << endl;
+            cout << "1. Resolver sudoku" << endl << "2. Validar sudoku" << endl << "3. Generar sudoku" << endl << "4. Imprimir sudoku" << endl <<  "0. Salir del programa" << endl;
+            cin >> opcion;
         }
-        else
-        {
-            cout << "No se pudo resolver el sudoku" << endl;
-        }
-        
+        cout << "Programa finalizado con éxito" << endl << endl;
     }
     else
     {
-        cout << "Error";
+        cout << "Error al leer el archivo";
     }
     return 0;
 }

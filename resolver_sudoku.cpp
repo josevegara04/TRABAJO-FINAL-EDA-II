@@ -6,7 +6,6 @@ using namespace std;
 // Funcion para imprimir el tablero
 void imprimir_sudoku(const vector<vector<int>>& sudoku, int n) 
 {
-    cout << endl << "-----" << "¡Sudoku resuelto!" << "-----" << endl << endl;
     cout << "Tamaño: " << n << " x " << n << endl << endl;
     for (int i = 0; i < sudoku.size(); i++) 
     {
