@@ -4,6 +4,45 @@
 #include <vector>
 #include "resolver_sudoku.cpp"
 #include "validar_sudoku.cpp"
+#include "generar_sudoku.cpp"
+
+using namespace std;
+
+void sobreescribir_archivo(string nombre_archivo, vector<vector<int>> sudoku, int n)
+{
+    ofstream file(nombre_archivo);
+    string numero;
+    double numero_digitos = log10(pow(3, 2)) + 1;
+    int round_numero = round(numero_digitos);
+    string ceros(round_numero - 1, '0');
+
+    if(file.is_open())
+    {
+        file << n << endl;
+        for(int i = 0; i < sudoku.size(); i++)
+        {
+            for(int j = 0; j < sudoku.size(); j++)
+            {
+                if(sudoku[i][j] == 0)
+                {
+                    numero = string(round_numero, '-');
+                    file << numero;
+                }
+                else
+                {
+                    numero = to_string(sudoku[i][j]);
+                    numero = ceros + numero;
+                    file << numero;
+                }
+            }
+            file << endl;
+        }
+    }
+    else
+    {
+        cout << "F";
+    }
+}
 
 vector<vector<int>> leer_archivo(string nombre_archivo, int& n, int& symbol, vector<int>& numeros)
 {
@@ -53,11 +92,9 @@ vector<vector<int>> leer_archivo(string nombre_archivo, int& n, int& symbol, vec
     return sudoku;
 }
 
-using namespace std;
-
 int main()
 {
-    int n = 0; 
+    int n = 3; 
     int symbol = 0;
     int opcion;
     vector<vector<int>> sudoku;
@@ -100,6 +137,16 @@ int main()
                     imprimir_sudoku(sudoku, n);
                 }
                 break;
+            case 3:
+                int dificultad;
+                cout << "Seleccione la dificualtad: " << endl;
+                cout << "1. Fácil" << endl << "2. Normal" << endl << "3. Difícil" << endl;
+                cin >> dificultad; 
+                cout << "Seleccione el tamaño del sudoku representado por un dígito: " << endl;
+                cin >> n;
+                
+                sobreescribir_archivo("Entrada.txt", generar_sudoku(n, dificultad, numeros), n);
+                break;
             case 4:
                 sudoku = leer_archivo("Entrada.txt", n, symbol, numeros);
                 imprimir_sudoku(sudoku, n);
@@ -109,6 +156,23 @@ int main()
         cout << "1. Resolver sudoku" << endl << "2. Validar sudoku" << endl << "3. Generar sudoku" << endl << "4. Imprimir sudoku" << endl <<  "0. Salir del programa" << endl;
         cin >> opcion;
     }
+
+    /* vector<vector<int>> sudoku {
+        {5, 3, 0, 0, 7, 0, 0, 0, 0},
+        {6, 0, 0, 1, 9, 5, 0, 0, 0},
+        {0, 9, 8, 0, 0, 0, 0, 6, 0},
+        {8, 0, 0, 0, 6, 0, 0, 0, 3},
+        {4, 0, 0, 8, 0, 3, 0, 0, 1},
+        {7, 0, 0, 0, 2, 0, 0, 0, 6},
+        {0, 6, 0, 0, 0, 0, 2, 8, 0},
+        {0, 0, 0, 4, 1, 9, 0, 0, 5},
+        {0, 0, 0, 0, 8, 0, 0, 7, 9}
+    }; */
+
+   /*  vector<vector<int>> sudoku; 
+    vector<int> numeros = {1,2,3,4,5,6,7,8,9};
+    sudoku = generar_sudoku(n, 1, numeros);
+    imprimir_sudoku(sudoku, n); */
     cout << endl << "Programa finalizado con éxito" << endl << endl;
     return 0;
 }
