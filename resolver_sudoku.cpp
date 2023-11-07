@@ -1,5 +1,6 @@
 #include <vector>
 #include <set>
+#include <iostream>
 
 using namespace std;
 
@@ -21,6 +22,10 @@ void imprimir_sudoku(const vector<vector<int>>& sudoku, int n)
 // Funcion para verificar si un numero es valido en una celda
 bool es_numero_valido(const vector<vector<int>>& sudoku, int n, int fila, int columna, int numero) 
 {
+    if(numero > sudoku.size())
+    {
+        return false;
+    }
     // Verificar la fila
     for (int i = 0; i < sudoku.size(); i++) 
     {
@@ -73,6 +78,7 @@ bool resolver_sudoku(vector<vector<int>>& sudoku, int n, vector<int>& numeros)
 
                         if (resolver_sudoku(sudoku, n, numeros)) 
                         {  
+                            cout << "x" << endl;
                             return true;
                         }
 
