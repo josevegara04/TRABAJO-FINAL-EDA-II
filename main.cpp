@@ -41,6 +41,8 @@ vector<vector<int>> generar_sudoku(int n, vector<int>& numeros, int dificultad)
             numero_random = numeros[indice_random];
         }
         sudoku[fila_random][columna_random] = numero_random;
+        cout << "Celda generada: " << fila_random << ", " 
+                    << columna_random << endl << "Numero: " << numero_random << endl;
     }
     copia = sudoku;
     while(!resolver_sudoku(sudoku, n, numeros))
@@ -60,12 +62,12 @@ vector<vector<int>> generar_sudoku(int n, vector<int>& numeros, int dificultad)
                 numero_random = numeros[indice_random];
             }
             sudoku[fila_random][columna_random] = numero_random;
+            
         }
         copia = sudoku;
     }
 
-    cout << "Celda generada: " << fila_random << ", " 
-            << columna_random << endl << "Numero: " << numero_random << endl;
+    
     cout << "Sudoku generado con éxito" << endl;
     switch(dificultad)
     {

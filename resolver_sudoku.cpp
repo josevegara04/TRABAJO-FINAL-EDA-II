@@ -75,10 +75,10 @@ bool resolver_sudoku(vector<vector<int>>& sudoku, int n, vector<int>& numeros)
                     if (es_numero_valido(sudoku, n, fila, columna, numero)) 
                     {
                         sudoku[fila][columna] = numero;  
+                        /* cout << sudoku[fila][columna] << endl; */
 
                         if (resolver_sudoku(sudoku, n, numeros)) 
                         {  
-                            cout << "x" << endl;
                             return true;
                         }
 
