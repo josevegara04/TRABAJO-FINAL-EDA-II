@@ -61,7 +61,7 @@ bool es_numero_valido(const vector<vector<int>>& sudoku, int n, int fila, int co
 }
 
 //Función para hacer y organizar las celdas vacías con sus candidatos
-vector<Celda> iniciar_celdas(const vector<vector<int>>& sudoku, int n)
+vector<Celda> iniciar_celdas(const vector<vector<int>> sudoku, const int n)
 {
     vector<Celda> celdas_vacias;
     for(int fila = 0; fila < sudoku.size(); fila++)
@@ -84,7 +84,8 @@ vector<Celda> iniciar_celdas(const vector<vector<int>>& sudoku, int n)
             }
         }
     }
-    sort(celdas_vacias.begin(), celdas_vacias.end(), [](const Celda& a, const Celda& b) {
+    sort(celdas_vacias.begin(), celdas_vacias.end(), [](const Celda& a, const Celda& b) 
+    {
         return a.candidatos.size() < b.candidatos.size();
     });
     return celdas_vacias;
@@ -119,4 +120,18 @@ bool resolver_sudoku(vector<vector<int>>& sudoku, const int n, vector<Celda> cel
         }
     }
     return false;
+}
+
+void imprimir_celdas_vacias(vector<Celda> celdas_vacias)
+{
+    cout << "Candidatos de celdas vacías:" << endl;
+    for (const Celda& celda : celdas_vacias) 
+    {
+        cout << "Fila: " << celda.fila << ", Columna: " << celda.columna << ", Candidatos: ";
+        for (int candidato : celda.candidatos) 
+        {
+            cout << candidato << " ";
+        }
+        cout << endl;
+    } 
 }

@@ -8,7 +8,7 @@
 
 using namespace std;
 
-vector<vector<int>> generar_sudoku(int n, int dificultad, vector<Celda> celdas_vacias)
+vector<vector<int>> generar_sudoku(int n, int dificultad, vector<Celda>& celdas_vacias)
 {
     random_device rd;
     mt19937 generator(rd());
@@ -104,7 +104,7 @@ vector<vector<int>> generar_sudoku(int n, int dificultad, vector<Celda> celdas_v
     return copia;
 }
 
-void sobreescribir_archivo(string nombre_archivo, vector<vector<int>> sudoku, int n)
+void sobreescribir_archivo(string nombre_archivo, vector<vector<int>>& sudoku, int n)
 {
     ofstream file(nombre_archivo);
     string numero;
@@ -193,7 +193,7 @@ vector<vector<int>> leer_archivo(string nombre_archivo, int& n, double& symbol)
 int main()
 {
     int n; 
-    double symbol;
+    double symbol = 0;
     int opcion;
     vector<vector<int>> sudoku;
     vector<Celda> celdas_vacias;
@@ -210,12 +210,14 @@ int main()
         {
             case 1:
                 sudoku = leer_archivo("Entrada.txt", n, symbol);
+                imprimir_sudoku(sudoku, n);
                 celdas_vacias = iniciar_celdas(sudoku, n);
+                imprimir_celdas_vacias(celdas_vacias);
                 if(resolver_sudoku(sudoku, n, celdas_vacias, 0))
                 {
                     cout << endl << "-----" << "¡Sudoku resuelto!" << "-----" << endl << endl;
                     imprimir_sudoku(sudoku, n);
-                    sobreescribir_archivo("Entrada.txt", sudoku, n);
+                    /* sobreescribir_archivo("Entrada.txt", sudoku, n); */
                 }
                 else
                 {
@@ -259,22 +261,6 @@ int main()
         cin >> opcion;
     }
 
-    /* vector<vector<int>> sudoku {
-        {5, 3, 0, 0, 7, 0, 0, 0, 0},
-        {6, 0, 0, 1, 9, 5, 0, 0, 0},
-        {0, 9, 8, 0, 0, 0, 0, 6, 0},
-        {8, 0, 0, 0, 6, 0, 0, 0, 3},
-        {4, 0, 0, 8, 0, 3, 0, 0, 1},
-        {7, 0, 0, 0, 2, 0, 0, 0, 6},
-        {0, 6, 0, 0, 0, 0, 2, 8, 0},
-        {0, 0, 0, 4, 1, 9, 0, 0, 5},
-        {0, 0, 0, 0, 8, 0, 0, 7, 9}
-    }; */
-
-   /*  vector<vector<int>> sudoku; 
-    vector<int> numeros = {1,2,3,4,5,6,7,8,9};
-    sudoku = generar_sudoku(n, 1, numeros);
-    imprimir_sudoku(sudoku, n); */
     cout << endl << "Programa finalizado con éxito" << endl << endl;
     return 0;
 }
