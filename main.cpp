@@ -8,7 +8,7 @@
 
 using namespace std;
 
-vector<vector<int>> generar_sudoku(int n, vector<int>& numeros, int dificultad)
+vector<vector<int>> generar_sudoku(int n, int dificultad, vector<Celda> celdas_vacias)
 {
     random_device rd;
     mt19937 generator(rd());
@@ -17,58 +17,11 @@ vector<vector<int>> generar_sudoku(int n, vector<int>& numeros, int dificultad)
     int casillas;
     int fila_random;
     int columna_random;
-    int indice_random;
     int numero_random;
     uniform_int_distribution<int> distribution(0, sudoku.size() - 1);
+    uniform_int_distribution<int> distri(1, sudoku.size());
     vector<vector<int>> copia;
 
-    for(int i = 1; i <= sudoku.size(); i++)
-    {
-        numeros.push_back(i);
-    }
-
-    for(int i = 0; i < 3; i++)
-    {
-        fila_random = distribution(generator);
-        columna_random = distribution(generator);
-        indice_random = distribution(generator);
-        numero_random = numeros[indice_random];
-        while(!es_numero_valido(sudoku, n, fila_random, columna_random, numero_random))
-        {
-            fila_random = distribution(generator);
-            columna_random = distribution(generator);
-            indice_random = distribution(generator);
-            numero_random = numeros[indice_random];
-        }
-        sudoku[fila_random][columna_random] = numero_random;
-        cout << "Celda generada: " << fila_random << ", " 
-                    << columna_random << endl << "Numero: " << numero_random << endl;
-    }
-    copia = sudoku;
-    while(!resolver_sudoku(sudoku, n, numeros))
-    {
-        sudoku.clear();
-        for(int i = 0; i < 3; i++)
-        {
-            fila_random = distribution(generator);
-            columna_random = distribution(generator);
-            indice_random = distribution(generator);
-            numero_random = numeros[indice_random];
-            while(!es_numero_valido(sudoku, n, fila_random, columna_random, numero_random))
-            {
-                fila_random = distribution(generator);
-                columna_random = distribution(generator);
-                indice_random = distribution(generator);
-                numero_random = numeros[indice_random];
-            }
-            sudoku[fila_random][columna_random] = numero_random;
-            
-        }
-        copia = sudoku;
-    }
-
-    
-    cout << "Sudoku generado con éxito" << endl;
     switch(dificultad)
     {
         case 1:
@@ -85,7 +38,59 @@ vector<vector<int>> generar_sudoku(int n, vector<int>& numeros, int dificultad)
             break;
     }
     casillas = static_cast<int>(porcentaje*pow(pow(n, 2), 2));
+
     for(int i = 0; i < casillas; i++)
+    {
+        fila_random = distribution(generator);
+        columna_random = distribution(generator);
+        numero_random = distri(generator);
+        while(!es_numero_valido(sudoku, n, fila_random, columna_random, numero_random))
+        {
+            fila_random = distribution(generator);
+            columna_random = distribution(generator);
+            numero_random = distri(generator);
+        }
+        sudoku[fila_random][columna_random] = numero_random;
+        cout << "Celda generada: " << fila_random << ", " 
+                    << columna_random << endl << "Numero: " << numero_random << endl;
+    }
+    copia = sudoku;
+    imprimir_sudoku(sudoku, n);
+
+    celdas_vacias = iniciar_celdas(sudoku, n);
+    for(int i = 0; i < celdas_vacias.size(); i ++)
+    {
+        Celda cel = celdas_vacias[i];
+        cout << "Fila: " << cel.fila << ", Columna: " << cel.columna << ", Candidatos: ";
+        for(int candidato : cel.candidatos)
+        {
+            cout << candidato << " ";
+        }
+        cout << endl;
+    }
+    while(!resolver_sudoku(sudoku, n, celdas_vacias, 0))
+    {
+        sudoku.clear();
+        for(int i = 0; i < 3; i++)
+        {
+            fila_random = distribution(generator);
+            columna_random = distribution(generator);
+            numero_random = distri(generator);
+            while(!es_numero_valido(sudoku, n, fila_random, columna_random, numero_random))
+            {
+                fila_random = distribution(generator);
+                columna_random = distribution(generator);
+                numero_random = distri(generator);
+            }
+            sudoku[fila_random][columna_random] = numero_random;
+        }
+        copia = sudoku;
+    }
+
+    
+    cout << "Sudoku generado con éxito" << endl;
+    
+    /* for(int i = 0; i < casillas; i++)
     {
         fila_random = distribution(generator);
         columna_random = distribution(generator);
@@ -95,7 +100,7 @@ vector<vector<int>> generar_sudoku(int n, vector<int>& numeros, int dificultad)
             columna_random = distribution(generator);
         }
         copia[fila_random][columna_random] = sudoku[fila_random][columna_random];
-    }
+    } */
     return copia;
 }
 
@@ -135,7 +140,7 @@ void sobreescribir_archivo(string nombre_archivo, vector<vector<int>> sudoku, in
     }
 }
 
-vector<vector<int>> leer_archivo(string nombre_archivo, int& n, double& symbol, vector<int>& numeros)
+vector<vector<int>> leer_archivo(string nombre_archivo, int& n, double& symbol)
 {
     ifstream file(nombre_archivo, ios::in);
     string line;
@@ -177,10 +182,6 @@ vector<vector<int>> leer_archivo(string nombre_archivo, int& n, double& symbol, 
             }
         }
         file.close();
-        for(int i = 1; i <= sudoku.size(); i++)
-        {
-            numeros.push_back(i);
-        }
     }
     else
     {
@@ -191,11 +192,11 @@ vector<vector<int>> leer_archivo(string nombre_archivo, int& n, double& symbol, 
 
 int main()
 {
-    int n = 3; 
-    double symbol = 0;
+    int n; 
+    double symbol;
     int opcion;
     vector<vector<int>> sudoku;
-    vector<int> numeros;
+    vector<Celda> celdas_vacias;
     
     //Pedir la opción a realizar
     cout << endl << "Escoja una opción: " << endl;
@@ -203,14 +204,14 @@ int main()
     cin >> opcion;
 
     //De acuerdo a la opción seleccionada, se escoje un algoritmo
-
     while(opcion != 0)
     {
         switch(opcion)
         {
             case 1:
-                sudoku = leer_archivo("Entrada.txt", n, symbol, numeros);
-                if(resolver_sudoku(sudoku, n, numeros))
+                sudoku = leer_archivo("Entrada.txt", n, symbol);
+                celdas_vacias = iniciar_celdas(sudoku, n);
+                if(resolver_sudoku(sudoku, n, celdas_vacias, 0))
                 {
                     cout << endl << "-----" << "¡Sudoku resuelto!" << "-----" << endl << endl;
                     imprimir_sudoku(sudoku, n);
@@ -223,8 +224,8 @@ int main()
                 }
                 break;
             case 2:
-                sudoku = leer_archivo("Entrada.txt", n, symbol, numeros);
-                if(validar_sudoku(sudoku, n, numeros))
+                sudoku = leer_archivo("Entrada.txt", n, symbol);
+                if(validar_sudoku(sudoku, n))
                 {
                     cout << endl << "-----" << "¡Sudoku valido!" << "-----" << endl << endl;
                     imprimir_sudoku(sudoku, n);
@@ -243,13 +244,13 @@ int main()
                 cout << "Seleccione el tamaño del sudoku representado por un dígito: " << endl;
                 cin >> n;
                 
-                sudoku = generar_sudoku(n, numeros, dificultad);
+                sudoku = generar_sudoku(n, dificultad, celdas_vacias);
                 sobreescribir_archivo("Entrada.txt", sudoku, n);
-                sudoku = leer_archivo("Entrada.txt", n, symbol, numeros);
+                sudoku = leer_archivo("Entrada.txt", n, symbol);
                 imprimir_sudoku(sudoku, n);
                 break;
             case 4:
-                sudoku = leer_archivo("Entrada.txt", n, symbol, numeros);
+                sudoku = leer_archivo("Entrada.txt", n, symbol);
                 imprimir_sudoku(sudoku, n);
                 break;
         }
