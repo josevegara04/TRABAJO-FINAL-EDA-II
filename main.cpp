@@ -68,7 +68,7 @@ vector<vector<int>> generar_sudoku(int n, int dificultad, vector<Celda>& celdas_
         }
         cout << endl;
     }
-    while(!resolver_sudoku(sudoku, n, celdas_vacias, 0))
+    while(!resolver_sudoku(sudoku, n, celdas_vacias))
     {
         sudoku.clear();
         for(int i = 0; i < 3; i++)
@@ -213,11 +213,12 @@ int main()
                 imprimir_sudoku(sudoku, n);
                 celdas_vacias = iniciar_celdas(sudoku, n);
                 imprimir_celdas_vacias(celdas_vacias);
-                if(resolver_sudoku(sudoku, n, celdas_vacias, 0))
+                resolver_uno(sudoku, celdas_vacias, true);
+                if(resolver_sudoku(sudoku, n, celdas_vacias))
                 {
                     cout << endl << "-----" << "¡Sudoku resuelto!" << "-----" << endl << endl;
                     imprimir_sudoku(sudoku, n);
-                    /* sobreescribir_archivo("Entrada.txt", sudoku, n); */
+                    sobreescribir_archivo("Entrada.txt", sudoku, n);
                 }
                 else
                 {
