@@ -5,18 +5,18 @@
 
 using namespace std;
 
-//Celdas vacías
+//Esstructura de las celdas vacías
 struct Celda
 {
     int fila;
     int columna;
-    set<int> candidatos;
+    set<int> candidatos; //Posibles candidatos para cada celda vacía
 };
 
-// Funcion para imprimir el tablero
+// Función para imprimir el tablero
 void imprimir_sudoku(const vector<vector<int>>& sudoku, int n) 
 {
-    cout << "Tamaño: " << n << " x " << n << endl << endl;
+    cout << "Tamaño: " << n << " x " << n << endl << endl; //Tamaño del sudoku
     for (int i = 0; i < sudoku.size(); i++) 
     {
         for (int j = 0; j < sudoku.size(); j++) 
@@ -28,10 +28,10 @@ void imprimir_sudoku(const vector<vector<int>>& sudoku, int n)
     cout << endl;
 }
 
-// Funcion para verificar si un numero es valido en una celda
-bool es_numero_valido(const vector<vector<int>>& sudoku, const int n, const int fila, const int columna, const int numero) 
+// Función para verificar si un número es válido en una celda
+bool numero_valido(const vector<vector<int>>& sudoku, const int n, const int fila, const int columna, const int numero) 
 {
-    // Verificar la fila
+    // Verificar en la fila y columna de la celda en cuestión
     for (int i = 0; i < sudoku.size(); i++) 
     {
         if (sudoku[fila][i] == numero || sudoku[i][columna] == numero) 
@@ -40,7 +40,7 @@ bool es_numero_valido(const vector<vector<int>>& sudoku, const int n, const int 
         }
     }
 
-    // Verificar la region
+    // Verificar la región de la celda vacía
     int inicioFila = (fila / n) * n;
     int inicioColumna = (columna / n) * n;
     for (int i = inicioFila; i < inicioFila + n; i++) 
@@ -56,7 +56,7 @@ bool es_numero_valido(const vector<vector<int>>& sudoku, const int n, const int 
     return true;
 }
 
-//Función para hacer y organizar las celdas vacías con sus candidatos
+//Función para hacer y organizar las celdas vacías con sus posibles candidatos
 vector<Celda> iniciar_celdas(const vector<vector<int>>& sudoku, const int n)
 {
     vector<Celda> celdas_vacias;
@@ -71,7 +71,7 @@ vector<Celda> iniciar_celdas(const vector<vector<int>>& sudoku, const int n)
                 celda.columna = columna;
                 for(int i = 1; i <= sudoku.size(); i++)
                 {
-                    if(es_numero_valido(sudoku, n, fila, columna, i))
+                    if(numero_valido(sudoku, n, fila, columna, i))
                     {
                         celda.candidatos.insert(i);
                     }
@@ -80,6 +80,8 @@ vector<Celda> iniciar_celdas(const vector<vector<int>>& sudoku, const int n)
             }
         }
     }
+
+    //Algoritmo para organizar las celdas vacías de menor a mayor en función de su total de candidatos
     sort(celdas_vacias.begin(), celdas_vacias.end(), [](const Celda& a, const Celda& b) 
     {
         return a.candidatos.size() < b.candidatos.size();
@@ -109,6 +111,8 @@ void borrar_candidatos(vector<Celda>& celdas_vacias, const int fila, const int c
             ++it;
         }
     }
+
+    //Algoritmo para organizar las celdas vacías de menor a mayor en función de su total de candidatos
     sort(celdas_vacias.begin(), celdas_vacias.end(), [](const Celda& a, const Celda& b) 
     {
         return a.candidatos.size() < b.candidatos.size();
@@ -154,13 +158,7 @@ void resolver_uno(vector<vector<int>>& sudoku, vector<Celda>& celdas_vacias, boo
     resolver_uno(sudoku, celdas_vacias, cen);
 }
 
-/* //Función para resolver celdas pares
-void resolver_celdas_pares(vector<vector<int>>& sudoku, vector<Celda>& celdas_vacias)
-{
-
-} */
-//Función para resolver el sudoku con backtracking
-bool resolver_sudoku(vector<vector<int>>& sudoku, const int n, const vector<Celda> celdas_vacias)
+bool resolver_sudoku(vector<vector<int>>& sudoku, const int n, const vector<Celda>& celdas_vacias)
 {
     for(const Celda& cel : celdas_vacias)
     {
@@ -168,16 +166,13 @@ bool resolver_sudoku(vector<vector<int>>& sudoku, const int n, const vector<Celd
         {
             for(int candidato : cel.candidatos)
             {
-                if(es_numero_valido(sudoku, n, cel.fila, cel.columna, candidato))
+                if(numero_valido(sudoku, n, cel.fila, cel.columna, candidato))
                 {
                     sudoku[cel.fila][cel.columna] = candidato;
                     if(resolver_sudoku(sudoku, n, celdas_vacias))
                     {
                         return true;
                     }
-                }
-                else
-                {
                     sudoku[cel.fila][cel.columna] = 0;
                 }
             }

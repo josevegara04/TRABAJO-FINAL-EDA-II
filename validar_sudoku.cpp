@@ -3,6 +3,7 @@
 
 using namespace std;
 
+//Función para validar cualquier sudoku
 bool validar_sudoku(const vector<vector<int>>& sudoku, int n)
 {
     set<int> verificados;
